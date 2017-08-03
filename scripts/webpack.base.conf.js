@@ -5,6 +5,7 @@ const babiliPreset = require('babel-preset-babili');
 const vueLoaderConfig = require('./vue-loader.conf');
 const { IS_DEV, styleRule } = require('./utils');
 
+const { MINIFY } = process.env;
 const DIST = 'dist';
 const definePlugin = new webpack.DefinePlugin({
   'process.env': {
@@ -61,12 +62,10 @@ module.exports = {
   plugins: [
     definePlugin,
     !IS_DEV && new BabiliWebpackPlugin({
-      mangle: false,
+      mangle: !!MINIFY,
     }, {
-      babili: process.env.MINIFY
-      ? babiliPreset
-      : (...args) => Object.assign(babiliPreset(...args), {
-        minified: false,
+      babili: (...args) => Object.assign(babiliPreset(...args), {
+        minified: !!MINIFY,
       }),
     }),
   ].filter(Boolean),
